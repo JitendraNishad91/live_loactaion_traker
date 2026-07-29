@@ -1,0 +1,23 @@
+{
+  "name": "live-location-tracker",
+  "version": "2.0.0",
+  "description": "Real-time GPS location tracker with live map, WebSocket updates, and dashboard",
+  "main": "server.js",
+  "scripts": {
+    "start": "node .",
+    "dev": "nodemon -e .html,.js ."
+  },
+  "author": "JitendraNishad91",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JitendraNishad91/live_loactaion_traker"
+  },
+  "dependencies": {
+    "cloudflared": "^0.5.3",
+    "cookie-parser": "^1.4.7",
+    "express": "^4.21.1",
+    "socket.io": "^4.8.1",
+    "tarkine": "^0.0.2"
+  }
+}

