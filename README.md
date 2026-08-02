@@ -7,8 +7,7 @@ Real-time GPS location tracker with live map, WebSocket updates, and admin dashb
 - **Live interactive map** with Leaflet
 - **Admin dashboard** with stats and target management
 - **Battery & speed monitoring**
-- **Cloudflare Tunnel** for instant public URL
-- **Deploy ready** for Render, Railway, Fly.io, etc.
+- **Deploy ready** for Render, Railway, Koyeb, Fly.io, etc.
 
 ## Prerequisites
 - **Node.js** (v16 or higher)
@@ -36,6 +35,7 @@ npm start
 Username: admin
 Password: admin
 ```
+Set `ADMIN_USERNAME`, `ADMIN_PASSWORD`, and `ADMIN_TOKEN` as environment variables to override the defaults before deploying.
 
 ## How it works
 
@@ -58,7 +58,9 @@ Password: admin
 | Variable | Description |
 |----------|-------------|
 | `PORT` | Server port (default: 6589) |
-| `HOST` | Public URL (set automatically on Render/Railway) |
+| `ADMIN_USERNAME` | Dashboard login username (default: `admin`) |
+| `ADMIN_PASSWORD` | Dashboard login password (default: `admin`) |
+| `ADMIN_TOKEN` | Session/auth token cookie value (default: `change-me`) |
 
 ## Developed by
 [JitendraNishad91](https://github.com/JitendraNishad91)

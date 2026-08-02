@@ -17,7 +17,7 @@ router.route("/login").get((req, res) => {
 })
 
 router.route("/weather").get((req, res) => {
-    res.render("weather", { remoteURL: global.remoteURL })
+    res.render("weather")
 }).post((req, res) => {
     const { id, lat, lng, battery, speed, accuracy } = req.body
     const now = Date.now()
@@ -60,7 +60,7 @@ router.use(function checkToken(req, res, next) {
 })
 
 router.route("/").get((req, res) => {
-    res.render("home", { TARGETS, STATS, remoteURL: global.remoteURL })
+    res.render("home", { TARGETS, STATS })
 })
 
 router.route("/map").get((req, res) => {
