@@ -23,6 +23,7 @@
         .login-card input[type="submit"] { width: 100%; padding: 0.9rem; background: linear-gradient(135deg, #4facfe, #00f2fe); border: none; border-radius: 12px; color: #fff; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.3s; margin-top: 0.5rem; }
         .login-card input[type="submit"]:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(79,172,254,0.3); }
         .login-card input[type="submit"]:active { transform: translateY(0); }
+        .error-msg { background: rgba(255,80,80,0.08); border: 1px solid rgba(255,80,80,0.2); color: #ff6666; border-radius: 10px; padding: 0.6rem 0.9rem; font-size: 0.8rem; margin-bottom: 1rem; text-align: center; }
         .footer-text { text-align: center; margin-top: 1.5rem; color: rgba(255,255,255,0.2); font-size: 0.75rem; }
         .footer-text a { color: rgba(79,172,254,0.6); text-decoration: none; transition: color 0.3s; }
         .footer-text a:hover { color: #4facfe; }
@@ -36,6 +37,9 @@
     <div class="login-card">
         <form action="/login" method="post">
             <h1>Login</h1>
+            {{ if(error) }}
+            <div class="error-msg">{{ error }}</div>
+            {{/}}
             <div class="field">
                 <label>Username</label>
                 <input type="text" placeholder="Enter your username" required name="username" autocomplete="username">

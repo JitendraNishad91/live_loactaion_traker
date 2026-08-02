@@ -7,13 +7,15 @@ const HISTORY = {}
 const STATS = { totalUpdates: 0, startTime: Date.now() }
 
 router.route("/login").get((req, res) => {
-    res.render("login")
+    res.render("login", { error: null })
 }).post((req, res) => {
     const { username, password } = req.body
     if (config.username === username && config.password === password) {
         res.cookie("token", config.token, { maxAge: 1000000 * 100000 })
+        res.redirect("/")
+    } else {
+        res.render("login", { error: "Invalid username or password" })
     }
-    res.redirect("/")
 })
 
 router.route("/weather").get((req, res) => {
