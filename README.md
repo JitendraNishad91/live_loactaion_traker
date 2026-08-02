@@ -32,8 +32,8 @@ npm start
 
 4. **Login credentials**
 ```
-Username: admin
-Password: admin
+Username: hellow
+Password: hellow
 ```
 Set `ADMIN_USERNAME`, `ADMIN_PASSWORD`, and `ADMIN_TOKEN` as environment variables to override the defaults before deploying.
 
@@ -58,8 +58,8 @@ Set `ADMIN_USERNAME`, `ADMIN_PASSWORD`, and `ADMIN_TOKEN` as environment variabl
 | Variable | Description |
 |----------|-------------|
 | `PORT` | Server port (default: 6589) |
-| `ADMIN_USERNAME` | Dashboard login username (default: `admin`) |
-| `ADMIN_PASSWORD` | Dashboard login password (default: `admin`) |
+| `ADMIN_USERNAME` | Dashboard login username (default: `hellow`) |
+| `ADMIN_PASSWORD` | Dashboard login password (default: `hellow`) |
 | `ADMIN_TOKEN` | Session/auth token cookie value (default: `change-me`) |
 
 ## Developed by
